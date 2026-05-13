@@ -143,30 +143,38 @@ body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(-
 /* SAVE BAR */
 .save-bar {
   background: var(--navy);
-  padding: 7px 16px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: nowrap;
-  overflow: hidden;
-  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 .save-bar .save-info {
   font-size: 11px;
   color: #B0B8C8;
   white-space: nowrap;
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 0;
 }
 .save-bar .save-info strong { color: var(--gold); }
-.save-bar .btn-group { display: flex; gap: 6px; flex-shrink: 0; }
-.save-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.btn-save { display: flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; transition: opacity .15s; }
-.btn-save:hover { opacity: .8; }
+.save-indicator { font-size: 10px; color: var(--green-l); opacity: 0; transition: opacity .5s; margin-left: 4px; }
+.save-indicator.show { opacity: 1; }
+.btn-save {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .btn-export { background: var(--gold); color: var(--navy); }
-.btn-import { background: transparent; color: #B0B8C8; border: 1px solid #4A5568; }
-.btn-reset { background: transparent; color: #FC8181; border: 1px solid #4A5568; }
+.btn-import { background: transparent; border: 1px solid #4A5568 !important; color: #B0B8C8; }
+.btn-reset { background: transparent; border: 1px solid #C53030 !important; color: #FC8181; font-size: 13px; padding: 4px 8px; }
 .save-indicator { font-size: 10px; color: #48BB78; opacity: 0; transition: opacity .5s; margin-left: 4px; }
 .save-indicator.show { opacity: 1; }
 
@@ -477,13 +485,10 @@ canvas { width: 100% !important; height: 100% !important; }
   <div class="tab" onclick="showTab('guide')">📖 Guide</div>
 </div>
 <div class="save-bar">
-  <div class="save-info">💾 <strong>Sauvegarde automatique</strong> — Tes données sont sauvegardées dans ton navigateur</div>
-  <div class="save-btns">
-    <span class="save-indicator" id="save-indicator">✓ Sauvegardé</span>
-    <button class="btn-save btn-export" onclick="exportData()">⬇ Exporter mes données</button>
-    <label class="btn-save btn-import" style="cursor:pointer">⬆ Importer<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
-    <button class="btn-save btn-reset" onclick="resetData()">🗑 Réinitialiser</button>
-  </div>
+  <span class="save-info">💾 <strong>Auto-save</strong> <span id="save-indicator" class="save-indicator">✓</span></span>
+  <button class="btn-save btn-export" onclick="exportData()">⬇ Exporter</button>
+  <label class="btn-save btn-import" style="cursor:pointer">⬆ Importer<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+  <button class="btn-save btn-reset" onclick="resetData()" title="Réinitialiser">🗑️</button>
 </div>
 
 <!-- ═══ BMR ═══════════════════════════════════════════════════════════════ -->
