@@ -1,4 +1,4 @@
-const CACHE_NAME = 'upprintstore-bmr-v4';
+const CACHE_NAME = 'upprintstore-bmr-v5';
 const ASSETS = [
   './',
   './index.html',
