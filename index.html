@@ -11,9 +11,9 @@
 <meta name="description" content="Calculateur BMR & TDEE — Suivi de perte de poids — UpprintStore">
 <title>BMR & Weight Loss Tracker — UpprintStore</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -105,6 +105,8 @@ body.dark .safety-note { background: #1A0505; border-color: var(--red-d); }
 body.dark .footer { background: #16213E; border-top-color: #2D3748; }
 body.dark .logo-name { color: #FFFFFF; }
 body.dark .logo-tagline { color: #B0B8C8; }
+body.dark .header-center h1 { color: #FFFFFF; }
+body.dark .header-center p { color: #B0B8C8; }
 body.dark .section-title { --text-p: #FFFFFF; }
 body.dark .section-title span { color: #FFFFFF; }
 body.dark .param-val { color: var(--gold) !important; }
@@ -302,16 +304,84 @@ canvas { width: 100% !important; height: 100% !important; }
 .result-value { transition: all .3s ease; }
 
 @media (max-width: 768px) {
-  .header { padding: 12px 16px; }
-  .header-center h1 { font-size: 14px; }
-  .page-content { padding: 16px; }
-  .c3, .c4, .c-tdee, .c-indic, .tracker-params, .summary-grid { grid-template-columns: 1fr 1fr; }
+  /* Header mobile */
+  .header {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .header-center {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    display: none; /* Cacher titre sur mobile — trop encombrant */
+  }
+  .logo-name { font-size: 15px; }
+  .logo-tagline { font-size: 8px; }
+  .logo-icon { width: 36px; height: 36px; }
+  #theme-toggle {
+    padding: 5px 10px;
+    font-size: 11px;
+    margin-left: auto;
+  }
+
+  /* Tabs scrollables */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 8px;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 10px 12px; font-size: 12px; white-space: nowrap; }
+
+  /* Contenu */
+  .page-content { padding: 12px 14px; }
+
+  /* Grilles */
+  .c3, .c4 { grid-template-columns: 1fr 1fr; }
   .c-tdee { grid-template-columns: 1fr; }
-  .speed-head, .speed-row { grid-template-columns: 2fr 1fr 1fr 1fr; }
-  .speed-head span:nth-child(n+6), .speed-row span:nth-child(n+6) { display: none; }
-  .tracker-head, .tracker-row { grid-template-columns: 1fr 1.4fr 1.4fr 1fr 2fr; }
-  .tracker-head span:nth-child(n+5):not(:last-child), .tracker-row span:nth-child(n+5):not(:last-child) { display: none; }
-  .sim-grid { grid-template-columns: repeat(3,1fr); }
+  .c-indic { grid-template-columns: 1fr; }
+  .tracker-params, .summary-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Cards résultats */
+  .result-value { font-size: 20px !important; }
+  .card-navy .result-value { font-size: 24px !important; }
+
+  /* Cards input — texte normal pas monospace */
+  .input-card select,
+  .input-card input { font-size: 13px; }
+
+  /* Tableau vitesses — cacher colonnes non essentielles */
+  .speed-head { grid-template-columns: 2fr 1fr 1fr 1fr; }
+  .speed-row { grid-template-columns: 2fr 1fr 1fr 1fr; }
+  .speed-head span:nth-child(n+6),
+  .speed-row span:nth-child(n+6) { display: none; }
+
+  /* Tracker */
+  .tracker-head { grid-template-columns: 0.8fr 1.2fr 1.2fr 1fr 1.5fr; }
+  .tracker-row { grid-template-columns: 0.8fr 1.2fr 1.2fr 1fr 1.5fr; }
+  .tracker-head span:nth-child(n+5):not(:last-child),
+  .tracker-row span:nth-child(n+5):not(:last-child) { display: none; }
+
+  /* Simulateur */
+  .sim-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Save bar */
+  .save-bar { padding: 8px 14px; gap: 8px; }
+  .save-bar .save-info { font-size: 10px; }
+
+  /* Sections */
+  .section-title span { font-size: 11px; }
+
+  /* Indic cards */
+  .indic-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .indic-val { font-size: 20px !important; }
+}
+
+@media (max-width: 400px) {
+  .c3, .c4, .tracker-params, .summary-grid { grid-template-columns: 1fr; }
+  .logo-name { font-size: 13px; }
 }
 </style>
 </head>
