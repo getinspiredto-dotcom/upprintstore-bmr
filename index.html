@@ -141,10 +141,26 @@ body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(-
 .header-center h1 { font-size: 18px; font-weight: 700; color: var(--navy); }
 .header-center p { font-size: 11px; color: var(--text-m); margin-top: 2px; }
 /* SAVE BAR */
-.save-bar { background: var(--navy); padding: 6px 14px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; }
-.save-bar .save-info { font-size: 10px; color: #B0B8C8; flex-shrink: 0; white-space: nowrap; }
+.save-bar {
+  background: var(--navy);
+  padding: 7px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  min-height: 0;
+}
+.save-bar .save-info {
+  font-size: 11px;
+  color: #B0B8C8;
+  white-space: nowrap;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .save-bar .save-info strong { color: var(--gold); }
-.save-bar .btn-group { display: flex; gap: 6px; flex-shrink: 0; margin-left: auto; }
+.save-bar .btn-group { display: flex; gap: 6px; flex-shrink: 0; }
 .save-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .btn-save { display: flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; transition: opacity .15s; }
 .btn-save:hover { opacity: .8; }
