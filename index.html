@@ -389,6 +389,51 @@ canvas { width: 100% !important; height: 100% !important; }
   .logo-name { font-size: 13px; }
 }
 
+/* ── MACROS ── */
+.macro-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.macro-bar-wrap { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+.macro-bar { height: 100%; border-radius: 4px; transition: width .6s ease; }
+.macro-row { display: grid; grid-template-columns: 1fr 80px 90px 70px; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.macro-row:last-child { border-bottom: none; }
+.macro-name { font-size: 13px; font-weight: 600; color: var(--text-p); }
+.macro-g { font-size: 14px; font-weight: 700; font-family: 'DM Mono', monospace; text-align: right; }
+.macro-kcal { font-size: 12px; color: var(--text-s); text-align: right; }
+.macro-pct { font-size: 12px; font-weight: 700; text-align: right; }
+.macro-total { background: var(--alt); padding: 12px 16px; display: grid; grid-template-columns: 1fr 80px 90px 70px; gap: 8px; align-items: center; border-top: 2px solid var(--border); }
+.profile-btn { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-s); cursor: pointer; transition: all .2s; white-space: nowrap; }
+.profile-btn.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+.profile-btn:hover:not(.active) { border-color: var(--navy); color: var(--navy); }
+.glossary-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.glossary-item:last-child { border-bottom: none; }
+.glossary-title { font-size: 13px; font-weight: 700; color: var(--text-p); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.glossary-text { font-size: 12px; color: var(--text-s); line-height: 1.7; }
+.kcal-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: 'DM Mono', monospace; margin-left: auto; }
+.accordion-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-p); }
+.accordion-btn:hover { background: var(--alt); }
+.accordion-content { display: none; padding: 0 16px 16px; }
+.accordion-content.open { display: block; }
+.custom-slider { display: grid; grid-template-columns: 100px 1fr 60px; gap: 12px; align-items: center; margin-bottom: 10px; }
+.custom-slider label { font-size: 12px; font-weight: 600; color: var(--text-s); }
+.custom-slider input[type=range] { width: 100%; accent-color: var(--gold); }
+.custom-slider span { font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace; text-align: right; }
+.custom-total { font-size: 12px; font-weight: 700; text-align: center; padding: 6px; border-radius: 6px; margin-top: 8px; }
+.custom-total.ok { background: var(--green-bg); color: var(--green-d); }
+.custom-total.err { background: #FFF5F5; color: var(--red-d); }
+
+/* Dark mode macros */
+body.dark .profile-btn { background: #222D42; border-color: #2D3748; color: #B0B8C8; }
+body.dark .profile-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+body.dark .macro-card { background: #222D42; border-color: #2D3748; }
+body.dark .macro-row { border-bottom-color: #2D3748; }
+body.dark .macro-total { background: #1A1A2E; border-top-color: #2D3748; }
+body.dark .macro-bar-wrap { background: #2D3748; }
+body.dark .accordion-btn { color: #FFFFFF; }
+body.dark .accordion-btn:hover { background: #1A1A2E; }
+body.dark .glossary-item { border-bottom-color: #2D3748; }
+body.dark .glossary-title { color: #FFFFFF; }
+body.dark .custom-total.ok { background: #0D2818; color: #48BB78; }
+
+/* PWA standalone mode */
 /* PWA standalone mode */
 @media (display-mode: standalone) {
   .header { padding: 10px 14px; }
@@ -483,6 +528,7 @@ canvas { width: 100% !important; height: 100% !important; }
   <div class="tab" onclick="showTab('calories')">🎯 Calories Cibles</div>
   <div class="tab" onclick="showTab('tracker')">📉 Tracker de Poids</div>
   <div class="tab" onclick="showTab('guide')">📖 Guide</div>
+  <div class="tab" onclick="showTab('macros')">🥗 Macros</div>
 </div>
 <div class="save-bar">
   <span class="save-info">💾 <strong>Auto-save</strong> <span id="save-indicator" class="save-indicator">✓</span></span>
@@ -657,13 +703,28 @@ canvas { width: 100% !important; height: 100% !important; }
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:16px"><span>Plan de perte de poids — 5 vitesses</span></div>
+  <div class="section-title" style="margin-top:16px"><span id="speed-section-title">Plan de perte de poids — 5 vitesses</span></div>
+
+  <!-- Note prise de masse -->
+  <div id="masse-note" style="display:none;background:#EAF3DE;border:1px solid #276749;border-radius:var(--radius);padding:16px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:28px">💪</span>
+      <div>
+        <p style="font-size:14px;font-weight:700;color:#276749;margin-bottom:4px">Objectif : Prise de masse</p>
+        <p style="font-size:13px;color:#276749">Cible calorique recommandée : <strong id="masse-kcal">—</strong> kcal/j</p>
+        <p style="font-size:12px;color:#4A5568;margin-top:6px">Surplus de +300 kcal/jour au-dessus de ton TDEE — optimisé pour maximiser la prise musculaire tout en limitant la prise de graisse.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="speed-table-wrap">
+  <p style="font-size:11px;color:var(--text-m);margin-bottom:8px">💡 Clique sur une vitesse pour l'utiliser dans l'onglet Macros</p>
   <div class="speed-table">
     <div class="speed-head">
       <span>Vitesse</span><span>Déficit/j</span><span>Calories/j</span>
       <span>Perte/sem.</span><span>Perte/mois</span><span>Perte/an</span><span>Cal/sem.</span>
     </div>
-    <div class="speed-row" id="sr-1">
+    <div class="speed-row" id="sr-1" onclick="selectSpeed(1)" style="cursor:pointer" title="Cliquer pour utiliser ces calories dans les Macros">
       <span>🐢 Très douce</span><span style="color:var(--text-m)">-250 kcal</span>
       <span class="speed-val" id="sc-1" style="color:var(--green-d)">—</span>
       <span class="speed-val" id="sw-1" style="color:var(--green-d)">—</span>
@@ -671,7 +732,7 @@ canvas { width: 100% !important; height: 100% !important; }
       <span class="speed-val" id="sy-1" style="color:var(--green-d)">—</span>
       <span class="speed-val" id="swk-1" style="color:var(--green-d)">—</span>
     </div>
-    <div class="speed-row alt" id="sr-2">
+    <div class="speed-row alt" id="sr-2" onclick="selectSpeed(2)" style="cursor:pointer" title="Cliquer pour utiliser ces calories dans les Macros">
       <span>🚶 Douce</span><span style="color:var(--text-m)">-375 kcal</span>
       <span class="speed-val" id="sc-2" style="color:var(--green-d)">—</span>
       <span class="speed-val" id="sw-2" style="color:var(--green-d)">—</span>
@@ -679,7 +740,7 @@ canvas { width: 100% !important; height: 100% !important; }
       <span class="speed-val" id="sy-2" style="color:var(--green-d)">—</span>
       <span class="speed-val" id="swk-2" style="color:var(--green-d)">—</span>
     </div>
-    <div class="speed-row" id="sr-3">
+    <div class="speed-row" id="sr-3" onclick="selectSpeed(3)" style="cursor:pointer" title="Cliquer pour utiliser ces calories dans les Macros">
       <span>🏃 Modérée</span><span style="color:var(--text-m)">-500 kcal</span>
       <span class="speed-val" id="sc-3" style="color:var(--blue-d)">—</span>
       <span class="speed-val" id="sw-3" style="color:var(--blue-d)">—</span>
@@ -687,7 +748,7 @@ canvas { width: 100% !important; height: 100% !important; }
       <span class="speed-val" id="sy-3" style="color:var(--blue-d)">—</span>
       <span class="speed-val" id="swk-3" style="color:var(--blue-d)">—</span>
     </div>
-    <div class="speed-row alt" id="sr-4">
+    <div class="speed-row alt" id="sr-4" onclick="selectSpeed(4)" style="cursor:pointer" title="Cliquer pour utiliser ces calories dans les Macros">
       <span>💨 Rapide</span><span style="color:var(--text-m)">-750 kcal</span>
       <span class="speed-val" id="sc-4" style="color:var(--orange-d)">—</span>
       <span class="speed-val" id="sw-4" style="color:var(--orange-d)">—</span>
@@ -695,7 +756,7 @@ canvas { width: 100% !important; height: 100% !important; }
       <span class="speed-val" id="sy-4" style="color:var(--orange-d)">—</span>
       <span class="speed-val" id="swk-4" style="color:var(--orange-d)">—</span>
     </div>
-    <div class="speed-row" id="sr-5">
+    <div class="speed-row" id="sr-5" onclick="selectSpeed(5)" style="cursor:pointer" title="Cliquer pour utiliser ces calories dans les Macros">
       <span>⚠️ Maximum</span><span style="color:var(--text-m)">-1000 kcal</span>
       <span class="speed-val" id="sc-5" style="color:var(--red-d)">—</span>
       <span class="speed-val" id="sw-5" style="color:var(--red-d)">—</span>
@@ -705,6 +766,7 @@ canvas { width: 100% !important; height: 100% !important; }
     </div>
   </div>
   <div class="safety-note">⚠️ Plancher de sécurité : minimum 1 200 kcal/jour</div>
+  </div>
 
   <div class="section-title" style="margin-top:16px"><span>Simulateur — Combien de temps pour mon objectif ?</span></div>
   <div class="sim-card">
@@ -890,6 +952,206 @@ canvas { width: 100% !important; height: 100% !important; }
   </div>
 </div>
 
+<!-- ═══ MACROS ══════════════════════════════════════════════════════════ -->
+<div id="tab-macros" class="page-content">
+
+  <!-- Profils -->
+  <div class="section-title"><span>Choisis ton profil</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+    <button class="profile-btn active" onclick="setProfile('standard', this)">⚖️ Standard</button>
+    <button class="profile-btn" onclick="setProfile('highprotein', this)">💪 High Protein</button>
+    <button class="profile-btn" onclick="setProfile('lowcarb', this)">🥑 Low Carb</button>
+    <button class="profile-btn" onclick="setProfile('keto', this)">⚡ Keto</button>
+    <button class="profile-btn" onclick="setProfile('custom', this)">🎛️ Personnalisé</button>
+  </div>
+
+  <!-- Curseurs personnalisés -->
+  <div id="custom-sliders" style="display:none;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+    <div class="custom-slider">
+      <label>🥩 Protéines</label>
+      <input type="range" id="sl-prot" min="10" max="60" value="30" oninput="updateCustom()">
+      <span id="sl-prot-val">30%</span>
+    </div>
+    <div class="custom-slider">
+      <label>🍞 Glucides</label>
+      <input type="range" id="sl-carb" min="5" max="70" value="40" oninput="updateCustom()">
+      <span id="sl-carb-val">40%</span>
+    </div>
+    <div class="custom-slider">
+      <label>🥑 Lipides</label>
+      <input type="range" id="sl-fat" min="10" max="75" value="30" oninput="updateCustom()">
+      <span id="sl-fat-val">30%</span>
+    </div>
+    <div class="custom-total ok" id="custom-total-check">✅ Total : 100% — parfait !</div>
+  </div>
+
+  <!-- Rappel calories -->
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <div class="result-card" style="flex:1;min-width:140px">
+      <div class="result-bar" style="background:var(--navy)"></div>
+      <div class="result-inner">
+        <div class="result-label">Calories disponibles</div>
+        <div class="result-value" id="mac-kcal" style="color:var(--navy);font-size:18px">— kcal</div>
+        <div class="result-sub" id="mac-obj">depuis ton TDEE</div>
+      </div>
+    </div>
+    <div class="result-card" style="flex:1;min-width:140px">
+      <div class="result-bar" style="background:var(--blue-l)"></div>
+      <div class="result-inner">
+        <div class="result-label">Poids de référence</div>
+        <div class="result-value" id="mac-poids" style="color:var(--blue-d);font-size:18px">— kg</div>
+        <div class="result-sub">pour le calcul des protéines</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau macros -->
+  <div class="section-title"><span>Répartition des macros</span></div>
+  <div class="macro-card" style="margin-bottom:16px">
+    <!-- Header -->
+    <div style="display:grid;grid-template-columns:1fr 80px 90px 70px;gap:8px;padding:10px 16px;background:var(--navy)">
+      <span style="font-size:10px;font-weight:700;color:var(--gold)">Macro</span>
+      <span style="font-size:10px;font-weight:700;color:var(--gold);text-align:right">Grammes</span>
+      <span style="font-size:10px;font-weight:700;color:var(--gold);text-align:right">Calories</span>
+      <span style="font-size:10px;font-weight:700;color:var(--gold);text-align:right">%</span>
+    </div>
+    <!-- Protéines -->
+    <div class="macro-row">
+      <div>
+        <div class="macro-name">🥩 Protéines</div>
+        <div class="macro-bar-wrap"><div class="macro-bar" id="bar-prot" style="background:#48BB78;width:30%"></div></div>
+        <div style="font-size:10px;color:var(--text-m);margin-top:3px">4 kcal/g</div>
+      </div>
+      <div class="macro-g" id="mac-prot-g" style="color:#276749">—g</div>
+      <div class="macro-kcal" id="mac-prot-k">— kcal</div>
+      <div class="macro-pct" id="mac-prot-p" style="color:#276749">—%</div>
+    </div>
+    <!-- Glucides -->
+    <div class="macro-row">
+      <div>
+        <div class="macro-name">🍞 Glucides</div>
+        <div class="macro-bar-wrap"><div class="macro-bar" id="bar-carb" style="background:#63B3ED;width:40%"></div></div>
+        <div style="font-size:10px;color:var(--text-m);margin-top:3px">4 kcal/g</div>
+      </div>
+      <div class="macro-g" id="mac-carb-g" style="color:#2B6CB0">—g</div>
+      <div class="macro-kcal" id="mac-carb-k">— kcal</div>
+      <div class="macro-pct" id="mac-carb-p" style="color:#2B6CB0">—%</div>
+    </div>
+    <!-- Lipides -->
+    <div class="macro-row">
+      <div>
+        <div class="macro-name">🥑 Lipides</div>
+        <div class="macro-bar-wrap"><div class="macro-bar" id="bar-fat" style="background:#ED8936;width:30%"></div></div>
+        <div style="font-size:10px;color:var(--text-m);margin-top:3px">9 kcal/g</div>
+      </div>
+      <div class="macro-g" id="mac-fat-g" style="color:#C05621">—g</div>
+      <div class="macro-kcal" id="mac-fat-k">— kcal</div>
+      <div class="macro-pct" id="mac-fat-p" style="color:#C05621">—%</div>
+    </div>
+    <!-- Total -->
+    <div class="macro-total">
+      <span style="font-size:12px;font-weight:700;color:var(--text-p)">TOTAL</span>
+      <span id="mac-tot-g" style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;text-align:right;color:var(--text-p)">—g</span>
+      <span id="mac-tot-k" style="font-size:13px;font-weight:700;font-family:'DM Mono',monospace;text-align:right;color:var(--navy)">— kcal</span>
+      <span style="font-size:12px;font-weight:700;text-align:right;color:var(--text-m)">100%</span>
+    </div>
+  </div>
+
+  <!-- Note protéines -->
+  <div id="prot-warning" style="display:none;background:#EAF3DE;border:1px solid #276749;border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;font-size:12px;color:#276749">
+    💡 <strong>Recommandation :</strong> Les protéines ont été ajustées à <span id="prot-min-val">—</span>g minimum (1.8g × ton poids) pour préserver ta masse musculaire.
+  </div>
+
+  <!-- ════ GLOSSAIRE ════ -->
+  <div class="section-title" style="margin-top:8px"><span>📚 Comprendre les macronutriments</span></div>
+  <div class="macro-card">
+    <button class="accordion-btn" onclick="toggleAccordion('acc-science')">
+      🔬 La science derrière les macros
+      <span id="acc-science-icon">＋</span>
+    </button>
+    <div class="accordion-content" id="acc-science">
+      <div class="glossary-item">
+        <div class="glossary-title">
+          Calories — la règle fondamentale
+        </div>
+        <div class="glossary-text">
+          La science est unanime : <strong>un déficit calorique est la seule chose nécessaire pour perdre du poids</strong>, quelle que soit la composition en macros. Une étude de 1964 (Kinsell et al.) et des dizaines d'autres depuis ont prouvé que la perte de poids est identique à calories égales, que tu manges low carb, keto, ou standard.
+          <br><br>
+          Ce qui change avec les macros, c'est <strong>la facilité à maintenir le déficit</strong>, la performance sportive, et la préservation musculaire.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-title">
+          🥩 Protéines — la macro prioritaire
+          <span class="kcal-badge" style="background:#EAF3DE;color:#276749">4 kcal/g</span>
+        </div>
+        <div class="glossary-text">
+          Les protéines sont la macro la plus importante en déficit calorique pour 3 raisons :<br><br>
+          <strong>1. Préservation musculaire</strong> — sans apport suffisant, ton corps puise dans tes muscles pour produire de l'énergie. Tu perds du poids mais pas de la graisse.<br>
+          <strong>2. Satiété</strong> — les protéines rassasient plus longtemps que les glucides et lipides. Moins faim = déficit plus facile à tenir.<br>
+          <strong>3. Effet thermique</strong> — ton corps brûle 20-30% des calories des protéines juste pour les digérer (contre 5-10% pour les glucides, 0-3% pour les lipides).<br><br>
+          <strong>Recommandation scientifique : 1.6 à 2.2g par kg de poids corporel</strong>
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-title">
+          🍞 Glucides — l'énergie flexible
+          <span class="kcal-badge" style="background:#EBF4FF;color:#2B6CB0">4 kcal/g</span>
+        </div>
+        <div class="glossary-text">
+          Les glucides ne sont pas essentiels au sens biologique — ton corps peut fonctionner sans eux (il utilisera les graisses comme carburant). Mais ils sont la source d'énergie préférée du cerveau et des muscles lors d'efforts intenses.<br><br>
+          <strong>Pas de "bons" ou "mauvais" glucides</strong> — ce qui compte c'est la quantité totale dans le cadre de ton budget calorique. Les fibres (légumes, céréales complètes) sont à privilégier pour la satiété et la santé digestive.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-title">
+          🥑 Lipides — les graisses essentielles
+          <span class="kcal-badge" style="background:#FFF5EB;color:#C05621">9 kcal/g</span>
+        </div>
+        <div class="glossary-text">
+          Les lipides sont <strong>les seules graisses essentielles</strong> — ton corps ne peut pas les synthétiser seul. Ils sont indispensables pour :<br><br>
+          • La production hormonale (testostérone, œstrogènes, cortisol)<br>
+          • L'absorption des vitamines liposolubles A, D, E, K<br>
+          • La santé du système nerveux et du cerveau<br><br>
+          <strong>⚠️ Ne pas descendre en dessous de 0.8g/kg</strong> — un déficit sévère en lipides perturbe les hormones et peut avoir des effets négatifs sur la santé à long terme.<br><br>
+          Note importante : les lipides ont <strong>plus du double de calories par gramme</strong> que les protéines et glucides (9 vs 4 kcal/g). C'est pourquoi les aliments gras sont très denses caloriquement.
+        </div>
+      </div>
+      <div class="glossary-item" style="border:none">
+        <div class="glossary-title">🍺 Alcool — la macro oubliée</div>
+        <div class="glossary-text">
+          <span class="kcal-badge" style="background:#F3E8FF;color:#6B46C1;margin-left:0;margin-right:8px">7 kcal/g</span>
+          L'alcool n'est pas un macro-nutriment essentiel mais il contient des calories — <strong>7 kcal par gramme</strong>. Un verre de vin (150ml) = ~120 kcal, une bière (330ml) = ~150 kcal. Ces calories s'ajoutent à ton budget journalier sans apporter de protéines, glucides utiles ou lipides essentiels.
+        </div>
+      </div>
+    </div>
+
+    <button class="accordion-btn" onclick="toggleAccordion('acc-profiles')" style="border-top:1px solid var(--border)">
+      📊 Les profils macros expliqués
+      <span id="acc-profiles-icon">＋</span>
+    </button>
+    <div class="accordion-content" id="acc-profiles">
+      <div class="glossary-item">
+        <div class="glossary-title">⚖️ Standard (30P / 40G / 30L)</div>
+        <div class="glossary-text">Équilibre classique validé par la plupart des organisations de santé. Convient à la majorité des personnes souhaitant perdre du poids ou se maintenir. Bonne performance sportive, facile à maintenir sur le long terme.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-title">💪 High Protein (40P / 30G / 30L)</div>
+        <div class="glossary-text">Idéal pour la perte de graisse avec préservation musculaire maximale. Recommandé si tu pratiques la musculation ou un sport de force. La satiété élevée facilite le déficit calorique.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-title">🥑 Low Carb (35P / 20G / 45L)</div>
+        <div class="glossary-text">Réduit les glucides sans les éliminer. Peut aider à stabiliser la glycémie et réduire les fringales pour certaines personnes. Moins restrictif que le keto, plus facile à maintenir socialement.</div>
+      </div>
+      <div class="glossary-item" style="border:none">
+        <div class="glossary-title">⚡ Keto (25P / 5G / 70L)</div>
+        <div class="glossary-text">Élimine quasi-totalement les glucides pour forcer le corps à utiliser les graisses comme carburant (cétose). Peut être efficace mais demande une adaptation de 2-4 semaines. Difficile à maintenir socialement. <strong>La science montre qu'il n'est pas supérieur au standard à calories égales.</strong></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <div class="footer">© UpprintStore — Usage personnel uniquement &nbsp;•&nbsp; Revente interdite</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -989,6 +1251,20 @@ function updateCalories() {
   document.getElementById('cal-poids').textContent = fmtDec(p) + (units === 'metric' ? ' kg' : ' lbs');
   const objLabel = obj === 'perte' ? 'Perte de poids' : obj === 'masse' ? 'Prise de masse' : 'Maintien';
   document.getElementById('cal-obj').textContent = objLabel;
+
+  // Prise de masse → cacher tableau déficit, montrer surplus
+  const surplusNote = document.getElementById('masse-note');
+  const speedTable = document.getElementById('speed-table-wrap');
+  if (surplusNote && speedTable) {
+    if (obj === 'masse') {
+      speedTable.style.display = 'none';
+      surplusNote.style.display = 'block';
+      surplusNote.querySelector('#masse-kcal').textContent = fmt(tdee + 300);
+    } else {
+      speedTable.style.display = 'block';
+      surplusNote.style.display = 'none';
+    }
+  }
 
   const deficits = [250,375,500,750,1000];
   deficits.forEach((d,i) => {
@@ -1287,12 +1563,13 @@ function updateChart(labels, poids, cible) {
 
 function showTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const names = ['bmr','calories','tracker','guide'];
+    const names = ['bmr','calories','tracker','guide','macros'];
     t.classList.toggle('active', names[i] === name);
   });
   document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'tracker') updateTracker();
+  if (name === 'macros') calcMacros();
 }
 
 
@@ -1489,6 +1766,155 @@ function dismissInstall() {
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────
+// ── MACROS ──────────────────────────────────────────────────────────────
+let selectedSpeed = null; // null = auto depuis objectif, sinon 1-5
+
+function selectSpeed(n) {
+  // Toggle — cliquer sur la même vitesse la désélectionne
+  selectedSpeed = selectedSpeed === n ? null : n;
+  // Mettre à jour le style des lignes
+  for (let i = 1; i <= 5; i++) {
+    const row = document.getElementById('sr-' + i);
+    if (!row) continue;
+    if (i === selectedSpeed) {
+      row.style.outline = '2px solid var(--gold)';
+      row.style.outlineOffset = '-2px';
+      row.style.borderRadius = '4px';
+    } else {
+      row.style.outline = 'none';
+    }
+  }
+  calcMacros();
+}
+
+const PROFILES = {
+  standard:    { prot: 30, carb: 40, fat: 30 },
+  highprotein: { prot: 40, carb: 30, fat: 30 },
+  lowcarb:     { prot: 35, carb: 20, fat: 45 },
+  keto:        { prot: 25, carb: 5,  fat: 70 },
+  custom:      { prot: 30, carb: 40, fat: 30 },
+};
+let currentProfile = 'standard';
+
+function setProfile(name, btn) {
+  currentProfile = name;
+  document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const sliders = document.getElementById('custom-sliders');
+  sliders.style.display = name === 'custom' ? 'block' : 'none';
+  if (name === 'custom') updateCustom();
+  else calcMacros();
+}
+
+function updateCustom() {
+  const p = parseInt(document.getElementById('sl-prot').value);
+  const c = parseInt(document.getElementById('sl-carb').value);
+  const f = parseInt(document.getElementById('sl-fat').value);
+  document.getElementById('sl-prot-val').textContent = p + '%';
+  document.getElementById('sl-carb-val').textContent = c + '%';
+  document.getElementById('sl-fat-val').textContent = f + '%';
+  const total = p + c + f;
+  const check = document.getElementById('custom-total-check');
+  check.textContent = total === 100
+    ? '✅ Total : 100% — parfait !'
+    : (total < 100 ? '⚠️ Total : ' + total + '% — il manque ' + (100-total) + '%' : '❌ Total : ' + total + '% — ' + (total-100) + '% de trop');
+  check.className = 'custom-total ' + (total === 100 ? 'ok' : 'err');
+  PROFILES.custom = { prot: p, carb: c, fat: f };
+  if (total === 100) calcMacros();
+}
+
+function calcMacros() {
+  const profile = PROFILES[currentProfile];
+  // Calories disponibles
+  const obj = document.getElementById('objectif')?.value || 'perte';
+  const deficits = [0, 250, 375, 500, 750, 1000];
+  let kcalDisp, kcalLabel;
+
+  if (obj === 'masse') {
+    // Prise de masse → surplus +300 kcal
+    kcalDisp = tdee + 300;
+    kcalLabel = '💪 Prise de masse (+300 kcal)';
+  } else if (obj === 'maintien') {
+    kcalDisp = tdee;
+    kcalLabel = '⚖️ Maintien';
+  } else if (selectedSpeed !== null) {
+    // Vitesse sélectionnée manuellement dans Calories Cibles
+    const deficit = deficits[selectedSpeed];
+    kcalDisp = Math.max(tdee - deficit, 1200);
+    const speedNames = ['','🐢 Très douce','🚶 Douce','🏃 Modérée','💨 Rapide','⚠️ Maximum'];
+    kcalLabel = speedNames[selectedSpeed] + ' (-' + deficit + ' kcal)';
+  } else {
+    // Auto : déficit standard -500 kcal
+    kcalDisp = Math.max(tdee - 500, 1200);
+    kcalLabel = '🎯 Perte de poids (-500 kcal)';
+  }
+  const poidsCur = poidsKg;
+
+  document.getElementById('mac-kcal').textContent = Math.round(kcalDisp).toLocaleString('fr-FR') + ' kcal';
+  document.getElementById('mac-obj').textContent = kcalLabel;
+  document.getElementById('mac-poids').textContent = poidsCur.toFixed(1) + ' kg';
+
+  // Calcul brut
+  let protKcal = kcalDisp * profile.prot / 100;
+  let carbKcal = kcalDisp * profile.carb / 100;
+  let fatKcal  = kcalDisp * profile.fat  / 100;
+
+  // Minimum protéines = 1.8g/kg
+  const protMin = poidsCur * 1.8;
+  const protMinKcal = protMin * 4;
+  const warning = document.getElementById('prot-warning');
+
+  if (protKcal < protMinKcal) {
+    protKcal = protMinKcal;
+    const remaining = kcalDisp - protKcal - fatKcal;
+    carbKcal = Math.max(remaining, 0);
+    warning.style.display = 'block';
+    document.getElementById('prot-min-val').textContent = Math.round(protMin);
+  } else {
+    warning.style.display = 'none';
+  }
+
+  // Grammes
+  const protG = Math.round(protKcal / 4);
+  const carbG = Math.round(carbKcal / 4);
+  const fatG  = Math.round(fatKcal / 9);
+  const totG  = protG + carbG + fatG;
+  const totK  = Math.round(protKcal + carbKcal + fatKcal);
+
+  // % réels
+  const protP = Math.round(protKcal / totK * 100);
+  const carbP = Math.round(carbKcal / totK * 100);
+  const fatP  = 100 - protP - carbP;
+
+  // Update UI
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('mac-prot-g', protG + 'g');
+  set('mac-prot-k', Math.round(protKcal).toLocaleString('fr-FR') + ' kcal');
+  set('mac-prot-p', protP + '%');
+  set('mac-carb-g', carbG + 'g');
+  set('mac-carb-k', Math.round(carbKcal).toLocaleString('fr-FR') + ' kcal');
+  set('mac-carb-p', carbP + '%');
+  set('mac-fat-g',  fatG + 'g');
+  set('mac-fat-k',  Math.round(fatKcal).toLocaleString('fr-FR') + ' kcal');
+  set('mac-fat-p',  fatP + '%');
+  set('mac-tot-g',  totG + 'g');
+  set('mac-tot-k',  totK.toLocaleString('fr-FR') + ' kcal');
+
+  // Barres
+  const setBar = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct + '%'; };
+  setBar('bar-prot', protP);
+  setBar('bar-carb', carbP);
+  setBar('bar-fat',  fatP);
+}
+
+function toggleAccordion(id) {
+  const content = document.getElementById(id);
+  const icon = document.getElementById(id + '-icon');
+  const isOpen = content.classList.contains('open');
+  content.classList.toggle('open', !isOpen);
+  if (icon) icon.textContent = isOpen ? '＋' : '－';
+}
+
 loadTheme();
 buildTrackerRows();
 if (!loadFromStorage()) calc();
